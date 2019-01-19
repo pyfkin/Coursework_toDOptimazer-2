@@ -1,6 +1,6 @@
 $(document).ready(function ()
 {
-    let dialog, form, currentModal,
+    let dialog, form, currentModalChoice, currentModalEdit
         name = $("#name"),
         description = $("#description"),
         term = $("#term"),
@@ -139,7 +139,7 @@ $(document).ready(function ()
         }
     });
 
-    currentModal = $("#current-modal").dialog({
+    currentModalChoice = $("#current-modal-choice").dialog({
         autoOpen: false,
         modal: true,
         resizable: false,
@@ -154,11 +154,28 @@ $(document).ready(function ()
                 alert("еще тоже не написано");
             },
             close: function(){
-                currentModal.dialog( "close" );
+                currentModalChoice.dialog( "close" );
             }
         },
 
     });
+
+    currentModalEdit = $("#current-modal-edit").dialog({
+        autoOpen: false,
+        modal: true,
+        resizable: false,
+        buttons: {
+            "Изменить задание": addTask,
+            Cancel: function() {
+                dialog.dialog( "close" );
+            }
+        },
+        close: function() {
+            form[ 0 ].reset();
+            allFields.removeClass( "ui-state-error" );
+        }
+    });
+
 
     form = dialog.find( "form" ).on( "submit", function(e) {
         e.preventDefault();
@@ -170,8 +187,8 @@ $(document).ready(function ()
     });
 
     $('#tableBodyId').on( "click", function (e) {
-        $("#current-modal").dialog( "option", "title", "Действие для задания '" + $(e.target).closest("tr")[0].cells[0].innerText + "'" );
-        $("#current-modal").dialog("open");
+        $("#current-modal-choice").dialog( "option", "title", "Действие для задания '" + $(e.target).closest("tr")[0].cells[0].innerText + "'" );
+        $("#current-modal-choice").dialog("open");
         // choiceEditDelete(target.parentElement.rowIndex);
     });
 });
