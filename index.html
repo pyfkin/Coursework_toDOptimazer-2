@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>toDOptimazer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="libs/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.6.1/js/all.js"
+            integrity="sha384-R5JkiUweZpJjELPWqttAYmYM1P3SNEJRM6ecTQF05pFFtxmCO+Y1CiUhvuDzgSVZ"
+            crossorigin="anonymous"></script>
+    <link type="text/css" href="libs/jquery-ui.min.css" rel="stylesheet">
+    <script src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<body>
+    <header class="td-header">
+        <h3 class="vh">Навигация</h3>
+        <nav class="container td-header__navigation">
+            <div class="row">
+                <div class="col-md-4 td-header__logo">
+                    <a href="index.html" class="td-header__icon">
+                        <img src="img/to-do.svg" style="height: 38px; width: 38px" alt="Лого">
+                    </a>
+                </div>
+                <div class="col-md-4 td-header__search search-items">
+                    <label><input  class="search-items__input" name="text"></label>
+                </div>
+                <ul class="col-md-3 td-header__functions functions-list">
+                    <li class="functions-list__item"><i class="fas fa-plus"></i></li>
+                    <li class="functions-list__item"><i class="fas fa-signal"></i></li>
+                    <li class="functions-list__item"><i class="far fa-bell"></i></li>
+                    <li class="functions-list__item"><i class="fas fa-cog"></i></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main class="td-main">
+        <section class="container">
+            <h3 class="vh">Вкладки</h3>
+            <div class="row">
+                <div class="td-main__tabs"  id="tabs">
+                    <ul class="col-md-4 tabs-list">
+                        <li class="tabs-list__item"><a href="#tab-current">Текущие задачи</a></li>
+                        <li class="tabs-list__item"><a href="#tab-done">Выполненные задачи</a></li>
+                        <li class="tabs-list__item"><a href="#tab-deleted">Удалённые задачи</a></li>
+                    </ul>
+                    <div class="col-md-8 td-main__content">
+                        <div class="current-content">
+                            <div id="current-content__dialog-form" title="Create new user">
+                                <p class="validateTips">All form fields are required.</p>
+                                <form>
+                                    <fieldset class="current-content__dialog-form__fields">
+                                        <label for="name">Название задания</label>
+                                        <input type="text" name="name" id="name" value="" class="text ui-widget-content ui-corner-all">
+                                        <label for="description">Описание задания</label>
+                                        <input type="text" name="name" id="description" value="" class="text ui-widget-content ui-corner-all">
+                                        <label for="term">Срок</label>
+                                        <input type="text" name="name" id="term" value="&infin;" class="text ui-widget-content ui-corner-all">
+
+                                        <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                                        <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+                                    </fieldset>
+                                </form>
+                            </div>
+                            <div class="current-panel ui-widget" id="tab-current">
+                                <h2 class="current-panel__header">Список задач</h2>
+                                <table border="1px" cellpadding="5" cellspacing="0" id="tasks" class="current-panel__table-tasks ui-widget ui-widget-content">
+                                    <thead class="current-panel__table-head">
+                                    <tr class="table-head__row ui-widget-header ">
+                                        <th class="table-head__data">Название задания</th>
+                                        <th class="table-head__data">Описание задания</th>
+                                        <th class="table-head__data">Срок</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="current-panel__table-body" id="tableBodyId"></tbody>
+                                        <tr class="table-body__row"></tr>
+                                </table>
+                                <button class="current-panel__addTaskButton">Добавить задачу</button>
+                            </div>
+                            <div class="current-modal centerer" id="current-modal" title="Выберите действие для задания №">
+                                <!--<p>Выберите действие для задания № <span></span>.</p>-->
+                                    <!--<button class="current-modal__edit" id="buttonEdit">edit</button>-->
+                                    <!--<button class="current-modal__done" id="buttonDone">done</button>-->
+                                    <!--<button class="current-modal__delete" id="buttonDelete">delete</button>-->
+                                    <!--<button class="current-modal__cancel" id="buttonCancelEditDelete">cancel</button>-->
+                            </div>
+                        </div>
+                        <div class="done-content">
+                            <div id="tab-done">
+                                <p>fdsafdsa</p>
+                                <p>fdsafdsa</p>
+                                <p>fdsafdsa</p>
+                            </div>
+                        </div>
+                        <div class="delete-content">
+                            <div id="tab-deleted">
+                                <p>fdsafdsa</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="current-panel__clearLocalStorage">Очистить Локальное хранилище</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
+
+<!-- Allow form submission with keyboard without duplicating the dialog button -->
