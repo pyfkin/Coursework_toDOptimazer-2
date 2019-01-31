@@ -130,11 +130,14 @@ input[type="radio"].vh {
 }
 
 .current-content__dialog-form__fields label,
-.current-content__dialog-form__fields input {
+.current-content__dialog-form__fields input,
+.current-modal-edit__dialog-form__fields label,
+.current-modal-edit__dialog-form__fields input{
     display: block;
 }
 
-.current-content__dialog-form__fields input.text {
+.current-content__dialog-form__fields input.text,
+.current-modal-edit__dialog-form__fields input.text{
     margin-bottom: 12px;
     width: 95%;
     padding: .4em;
@@ -149,7 +152,8 @@ input[type="radio"].vh {
     padding: 0.3em;
 }
 
-.current-content__dialog-form__fields {
+.current-content__dialog-form__fields,
+.current-modal-edit__dialog-form__fields{
     padding: 0;
     border: 0;
     margin-top: 25px;

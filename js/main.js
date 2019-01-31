@@ -1,19 +1,25 @@
 $(document).ready(function ()
 {
-    let dialog, form, currentModalChoice, currentModalEdit
+    let dialog, formCurrent, formEdit, currentModalChoice, currentModalEdit, currentModalDelete,
         name = $("#name"),
         description = $("#description"),
         term = $("#term"),
+        nameEdit = $("#name-edit"),
+        descriptionEdit = $("#description-edit"),
+        termEdit = $("#term-edit"),
         allFields = $([]).add(name).add(description).add(term),
+        allFieldsEdit = $([]).add(nameEdit).add(descriptionEdit).add(termEdit),
+        rowIndexForEdit,
+        tbl = $("#tableBodyId"),
         tips = $(".validateTips");
-
+    let tblBody = document.querySelector("#tableBodyId");
     //добавление функционала боковых закладок
     $("#tabs").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
     $("#tabs .tabs-list__item").removeClass("ui-corner-top").addClass("ui-corner-left");
 
 
     //чтение данных из localStorage
-    function initTasksTable()
+    const initTasksTable = () =>
     {
         if ( getCurrentTasksLocalStorage() )
         {
@@ -27,20 +33,20 @@ $(document).ready(function ()
                     "</tr>" );
             }
         }
-    }
+    };
     initTasksTable();
 
     //диалоговое окно для добавления Текущих задач
-    function updateTips(t)
+    const updateTips = (t) =>
     {
         tips.text(t).addClass("ui-state-highlight");
         setTimeout(function ()
         {
             tips.removeClass("ui-state-highlight", 1500);
         }, 500);
-    }
+    };
 
-    function checkLength(o, n, min, max)
+    const checkLength = (o, n, min, max) =>
     {
         if (o.val().length > max || o.val().length < min) {
             o.addClass("ui-state-error");
@@ -50,19 +56,20 @@ $(document).ready(function ()
         } else {
             return true;
         }
-    }
+    };
 
-    function checkRegexp( o, regexp, n ) {
-        if ( !( regexp.test( o.val() ) ) ) {
-            o.addClass( "ui-state-error" );
-            updateTips( n );
-            return false;
-        } else {
-            return true;
-        }
-    }
+    // const checkRegexp = ( o, regexp, n ) =>
+    // {
+    //     if ( !( regexp.test( o.val() ) ) ) {
+    //         o.addClass( "ui-state-error" );
+    //         updateTips( n );
+    //         return false;
+    //     } else {
+    //         return true;
+    //     }
+    // };
 
-    function addTask()
+    const addTask = () =>
     {
         let valid = true;
         allFields.removeClass( "ui-state-error" );
@@ -80,10 +87,26 @@ $(document).ready(function ()
             dialog.dialog( "close" );
         }
         return valid;
-    }
+    };
 
+    const editTask = () =>
+    {
+        let input = $(".current-modal-edit__dialog-form__fields input");
+        tblBody.rows[rowIndexForEdit - 1].cells[0].innerHTML = input[0].value;
+        tblBody.rows[rowIndexForEdit - 1].cells[1].innerHTML = input[1].value;
+        tblBody.rows[rowIndexForEdit - 1].cells[2].innerHTML = input[2].value;
+        editLocalStorage(rowIndexForEdit - 1, input[0].value, input[1].value, input[2].value);
+        currentModalEdit.dialog("close");
+    };
+
+    const deleteTask = () =>
+    {
+        tblBody.deleteRow(rowIndexForEdit - 1);
+        deleteLocalStorage(rowIndexForEdit);
+        currentModalDelete.dialog("close");
+    };
     //запись в LocalStorage
-    function setLocalStorage(_name, _descr, _term)
+    const setLocalStorage = (_name, _descr, _term) =>
     {
         let obj = {
             name: _name,
@@ -94,10 +117,28 @@ $(document).ready(function ()
         massObj.push(obj);
         let serialObj = JSON.stringify(massObj);
         localStorage.setItem("current", serialObj);
-    }
+    };
+
+    const editLocalStorage = (index, ...obj) =>
+    {
+        let massObj = getCurrentTasksLocalStorage();
+        massObj[index].name = obj[0];
+        massObj[index].description = obj[1];
+        massObj[index].term = obj[2];
+        let serialObj = JSON.stringify(massObj);
+        localStorage.setItem("current", serialObj);
+    };
+
+    const deleteLocalStorage = (index) =>
+    {
+        let massObj = getCurrentTasksLocalStorage();
+        massObj.splice(index - 1, 1);
+        let serialObj = JSON.stringify(massObj);
+        localStorage.setItem("current", serialObj);
+    };
 
     //чтение из localStorage
-    function getCurrentTasksLocalStorage()
+    function getCurrentTasksLocalStorage ()
     {
         return JSON.parse(localStorage.getItem("current"));
     }
@@ -110,14 +151,8 @@ $(document).ready(function ()
         return JSON.parse(localStorage.getItem("current"));
     }
 
-    function choiceEditDelete(rowIndex){
-        models.editDelete.classList.add('active');
-        var headerTextSpan = models.editDelete.getElementsByTagName('span');
-        headerTextSpan[0].innerText = rowIndex;
-    }
-
     //очистка localStorage
-    $(".current-panel__clearLocalStorage").click(function (e)
+    $(".current-panel__clearLocalStorage").click(() =>
     {
         localStorage.clear();
     });
@@ -134,7 +169,7 @@ $(document).ready(function ()
             }
         },
         close: function() {
-            form[ 0 ].reset();
+            formCurrent[ 0 ].reset();
             allFields.removeClass( "ui-state-error" );
         }
     });
@@ -145,50 +180,82 @@ $(document).ready(function ()
         resizable: false,
         buttons: {
             edit: function(){
-                alert("Еще не написано, но я постараюсь это сделать");
+                currentModalEdit.dialog("open");
+                currentModalChoice.dialog("close");
+                currentModalEdit.dialog("option", "title", "Введите изменения для задания №'" + (rowIndexForEdit + 1) + "'" );
+                beforeEdit(rowIndexForEdit);
             },
             done: function (){
                 alert("Совсем не написано, и тут я тоже постараюсь сделать");
             },
             delete: function (){
-                alert("еще тоже не написано");
+                currentModalDelete.dialog("open");
+                currentModalChoice.dialog("close");
             },
             close: function(){
                 currentModalChoice.dialog( "close" );
             }
         },
-
     });
 
     currentModalEdit = $("#current-modal-edit").dialog({
         autoOpen: false,
         modal: true,
         resizable: false,
+        minWidth: 600,
         buttons: {
-            "Изменить задание": addTask,
+            "Изменить задание": editTask,
             Cancel: function() {
-                dialog.dialog( "close" );
+                currentModalEdit.dialog( "close" );
             }
         },
         close: function() {
-            form[ 0 ].reset();
-            allFields.removeClass( "ui-state-error" );
+            formEdit[ 0 ].reset();
+            allFieldsEdit.removeClass( "ui-state-error" );
         }
     });
 
+    currentModalDelete = $("#current-modal-dialogDelete-confirm").dialog({
+        autoOpen: false,
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+            "Delete task": deleteTask,
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
 
-    form = dialog.find( "form" ).on( "submit", function(e) {
+    formCurrent = dialog.find( "form" ).on( "submit", (e) => {
         e.preventDefault();
         addTask();
     });
 
-    $(".current-panel__addTaskButton" ).button().on( "click", function() {
+    formEdit = currentModalEdit.find( "form" ).on( "submit", (e) => {
+        e.preventDefault();
+        editTask();
+    });
+
+    $(".current-panel__addTaskButton" ).button().on( "click", () => {
         dialog.dialog( "open" );
     });
 
-    $('#tableBodyId').on( "click", function (e) {
-        $("#current-modal-choice").dialog( "option", "title", "Действие для задания '" + $(e.target).closest("tr")[0].cells[0].innerText + "'" );
-        $("#current-modal-choice").dialog("open");
-        // choiceEditDelete(target.parentElement.rowIndex);
+    tbl.on( "click", (e) => {
+        let target = e.target;
+        currentModalChoice.dialog( "option", "title", "Действие для задания №'" + target.parentElement.rowIndex + "'" );
+        currentModalChoice.dialog("open");
+        rowIndexForEdit = target.parentElement.rowIndex;
+
     });
+
+    let beforeEdit = (rowIndex) =>{
+        nameEdit.val(tblBody.rows[rowIndex - 1].cells[0].innerHTML);
+        descriptionEdit.val(tblBody.rows[rowIndex - 1].cells[1].innerHTML);
+        termEdit.val(tblBody.rows[rowIndex - 1].cells[2].innerHTML);
+    }
+
+
 });
